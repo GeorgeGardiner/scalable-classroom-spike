@@ -5,8 +5,60 @@ let queryLock = false;
 
 $(document).ready(function () {
     setInterval(refreshVisibleDevices, 1000);
-    setInterval(queryConnectedDevices, 1000);
+    setInterval(queryConnectedDevices, 5000);
     queryConnectedDevices();
+
+    $('#sendMessageButton').on('click', function(e) {
+        let message = $('#sendMessage').val();
+        $.ajax({
+            url: backdropHubBase + '/direct-message',
+            type : 'POST',
+            processData: false,
+            contentType : 'application/json',
+            data: JSON.stringify({
+                'device_ids' : connectedDevices,
+                'payload' : {
+                    'method' : 'send_message',
+                    'payload' : {
+                        'title' : 'Message from Scalable Classroom',
+                        'body' : message
+                    }
+                }
+            }),
+            success: function(data) {
+                $('#sendMessage').val('');
+            },
+            complete: function() {
+            },
+        });
+    });
+
+    $('#openWebsiteButton').on('click', function(e) {
+        let url = $('#openWebsite').val();
+        $.ajax({
+            url: backdropHubBase + '/direct-message',
+            type : 'POST',
+            processData: false,
+            contentType : 'application/json',
+            data: JSON.stringify({
+                'device_ids' : connectedDevices,
+                'payload' : {
+                    'method' : 'open_website',
+                    'payload' : {
+                        'url' : url
+                    }
+                }
+            }),
+            success: function(data) {
+                $('#openWebsite').val('');
+            },
+            complete: function() {
+            },
+        });
+
+    });
+
+
 });
 
 function queryConnectedDevices() {
